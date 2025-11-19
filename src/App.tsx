@@ -7,6 +7,10 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import WhatsAppSettings from "./pages/WhatsAppSettings";
 import Packages from "./pages/Packages";
+import PackagePurchase from "./pages/PackagePurchase";
+import PackageUpgrade from "./pages/PackageUpgrade";
+import Payment from "./pages/Payment";
+import Invoice from "./pages/Invoice";
 import Transactions from "./pages/Transactions";
 import Signup from "./pages/Signup";
 import Privacy from "./pages/Privacy";
@@ -26,6 +30,10 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings/whatsapp" element={<WhatsAppSettings />} />
           <Route path="/packages" element={<Packages />} />
+          <Route path="/packages/purchase" element={<PackagePurchase />} />
+          <Route path="/packages/upgrade" element={<PackageUpgrade />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/invoice" element={<Invoice />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/privacy" element={<Privacy />} />
