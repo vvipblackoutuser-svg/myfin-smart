@@ -79,6 +79,14 @@ const Packages = () => {
                   <span className="text-4xl font-bold">{pkg.price}</span>
                   <span className="text-muted-foreground">{pkg.period}</span>
                 </div>
+                {pkg.isActive && (
+                  <div className="pt-4 border-t mt-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Tanggal Expired</span>
+                      <span className="font-semibold">15 Januari 2025</span>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-3">
@@ -101,28 +109,6 @@ const Packages = () => {
             </Card>
           ))}
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Informasi Langganan</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Paket Aktif</p>
-                <p className="font-semibold">UMKM</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Tanggal Perpanjangan</p>
-                <p className="font-semibold">15 Januari 2025</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Status</p>
-                <Badge className="bg-success">Aktif</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </DashboardLayout>
   );
