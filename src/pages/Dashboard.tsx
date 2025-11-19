@@ -2,35 +2,9 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, TrendingUp, TrendingDown, Wallet, MessageSquare, FileSpreadsheet, ArrowRight, Calendar, CheckCircle2 } from "lucide-react";
+import { Play, Wallet, MessageSquare, FileSpreadsheet, ArrowRight, Calendar, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const stats = [
-  {
-    title: "Total Transaksi",
-    value: "1,234",
-    change: "+12.5%",
-    trend: "up",
-    icon: Wallet,
-    description: "Bulan ini"
-  },
-  {
-    title: "Pemasukan",
-    value: "Rp 45.2M",
-    change: "+8.2%",
-    trend: "up",
-    icon: TrendingUp,
-    description: "Bulan ini"
-  },
-  {
-    title: "Pengeluaran",
-    value: "Rp 32.8M",
-    change: "-3.1%",
-    trend: "down",
-    icon: TrendingDown,
-    description: "Bulan ini"
-  }
-];
 
 const videos = [
   {
@@ -126,33 +100,6 @@ const Dashboard = () => {
               {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
             </Badge>
           </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          {stats.map((stat, index) => (
-            <Card key={index} className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardDescription className="text-xs font-medium">{stat.description}</CardDescription>
-                  <div className={`h-10 w-10 rounded-lg ${stat.trend === 'up' ? 'bg-success/10' : 'bg-muted'} flex items-center justify-center`}>
-                    <stat.icon className={`h-5 w-5 ${stat.trend === 'up' ? 'text-success' : 'text-muted-foreground'}`} />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <h3 className="text-2xl md:text-3xl font-bold">{stat.value}</h3>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <Badge variant={stat.trend === 'up' ? 'default' : 'secondary'} className="text-xs">
-                      {stat.change}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
