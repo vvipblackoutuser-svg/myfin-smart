@@ -2,13 +2,15 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const packages = [
   {
+    id: "umkm",
     name: "UMKM",
     price: "Rp 99.000",
+    priceValue: 99000,
     period: "/bulan",
     description: "Cocok untuk usaha kecil dan menengah",
     features: [
@@ -18,12 +20,13 @@ const packages = [
       "Upload gambar & voice note",
       "Rekap harian",
       "Support email"
-    ],
-    isActive: true
+    ]
   },
   {
+    id: "bisnis",
     name: "BISNIS",
     price: "Rp 299.000",
+    priceValue: 299000,
     period: "/bulan",
     description: "Untuk bisnis yang sedang berkembang",
     features: [
@@ -35,44 +38,52 @@ const packages = [
       "Priority support",
       "Custom spreadsheet template"
     ],
-    isActive: false,
     popular: true
   }
 ];
 
-const Packages = () => {
+const PackagePurchase = () => {
   const navigate = useNavigate();
+
+  const handlePurchase = (pkg: typeof packages[0]) => {
+    navigate("/payment", { 
+      state: { 
+        package: pkg,
+        type: "purchase" 
+      } 
+    });
+  };
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Paket Aktif</h1>
-          <p className="text-muted-foreground">
-            Kelola langganan dan upgrade paket Anda
-          </p>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Beli Paket</h1>
+            <p className="text-muted-foreground">
+              Pilih paket yang sesuai dengan kebutuhan bisnis Anda
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {packages.map((pkg, index) => (
+          {packages.map((pkg) => (
             <Card
-              key={index}
+              key={pkg.id}
               className={`relative border-2 ${
-                pkg.isActive
-                  ? "border-primary shadow-glow"
-                  : pkg.popular
-                  ? "border-primary/50"
-                  : ""
+                pkg.popular ? "border-primary shadow-glow" : ""
               }`}
             >
               {pkg.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <Badge className="bg-gradient-primary">Populer</Badge>
-                </div>
-              )}
-              {pkg.isActive && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-success">Paket Aktif</Badge>
                 </div>
               )}
               <CardHeader>
@@ -82,14 +93,6 @@ const Packages = () => {
                   <span className="text-4xl font-bold">{pkg.price}</span>
                   <span className="text-muted-foreground">{pkg.period}</span>
                 </div>
-                {pkg.isActive && (
-                  <div className="pt-4 border-t mt-4">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Tanggal Expired</span>
-                      <span className="font-semibold">15 Januari 2025</span>
-                    </div>
-                  </div>
-                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-3">
@@ -101,13 +104,10 @@ const Packages = () => {
                   ))}
                 </ul>
                 <Button
-                  className={`w-full ${
-                    pkg.isActive ? "bg-muted text-muted-foreground" : "bg-gradient-primary"
-                  }`}
-                  disabled={pkg.isActive}
-                  onClick={() => !pkg.isActive && navigate("/packages/upgrade")}
+                  className="w-full bg-gradient-primary"
+                  onClick={() => handlePurchase(pkg)}
                 >
-                  {pkg.isActive ? "Paket Saat Ini" : "Upgrade Paket"}
+                  Beli Sekarang
                 </Button>
               </CardContent>
             </Card>
@@ -118,4 +118,4 @@ const Packages = () => {
   );
 };
 
-export default Packages;
+export default PackagePurchase;
