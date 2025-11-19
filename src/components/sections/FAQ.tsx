@@ -34,11 +34,18 @@ const faqs = [
 
 export const FAQ = () => {
   return (
-    <section id="faq" className="w-full py-20 md:py-32">
+    <section id="faq" className="w-full py-20 md:py-32 lg:py-40">
       <div className="container">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold">Pertanyaan Umum</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <div className="text-center space-y-4 mb-20">
+          <div className="inline-block mb-4">
+            <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold border border-primary/20">
+              ❓ FAQ
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+            <span className="text-primary">Pertanyaan</span> Umum
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Temukan jawaban untuk pertanyaan yang sering diajukan
           </p>
         </div>
@@ -49,12 +56,12 @@ export const FAQ = () => {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="border-2 rounded-lg px-6 hover:border-primary/50 transition-colors"
+                className="border-2 rounded-xl px-6 hover:border-primary/50 transition-all hover:shadow-lg bg-gradient-to-br from-card to-card/50"
               >
-                <AccordionTrigger className="text-left hover:no-underline">
+                <AccordionTrigger className="text-left hover:no-underline text-base font-semibold py-5 hover:text-primary transition-colors">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
