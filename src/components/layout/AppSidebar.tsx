@@ -30,7 +30,7 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path;
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
+    <Sidebar collapsible="icon">
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center shrink-0">
@@ -45,24 +45,23 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <nav className="flex-1 p-4">
-          <div className="space-y-1">
-            {menuItems.map((item) => (
-              <NavLink
-                key={item.title}
-                to={item.url}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-                  isActive(item.url)
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                <span>{item.title}</span>
-              </NavLink>
-            ))}
-          </div>
-        </nav>
+        <SidebarGroup>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                    <NavLink to={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
