@@ -1,4 +1,3 @@
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,8 +16,7 @@ const packages = [
       "Upload gambar & voice note",
       "Rekap harian",
       "Support email"
-    ],
-    isActive: true
+    ]
   },
   {
     name: "BISNIS",
@@ -34,42 +32,35 @@ const packages = [
       "Priority support",
       "Custom spreadsheet template"
     ],
-    isActive: false,
     popular: true
   }
 ];
 
-const Packages = () => {
+export const Pricing = () => {
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Paket Aktif</h1>
-          <p className="text-muted-foreground">
-            Kelola langganan dan upgrade paket Anda
+    <section id="pricing" className="py-24 bg-muted/50">
+      <div className="container">
+        <div className="text-center space-y-4 mb-16">
+          <Badge variant="outline" className="text-sm">Harga</Badge>
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Paket yang Sesuai untuk Bisnis Anda
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Pilih paket yang tepat untuk kebutuhan pencatatan keuangan bisnis Anda
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {packages.map((pkg, index) => (
             <Card
               key={index}
               className={`relative border-2 ${
-                pkg.isActive
-                  ? "border-primary shadow-glow"
-                  : pkg.popular
-                  ? "border-primary/50"
-                  : ""
+                pkg.popular ? "border-primary shadow-glow" : ""
               }`}
             >
               {pkg.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <Badge className="bg-gradient-primary">Populer</Badge>
-                </div>
-              )}
-              {pkg.isActive && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-success">Paket Aktif</Badge>
                 </div>
               )}
               <CardHeader>
@@ -89,43 +80,14 @@ const Packages = () => {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className={`w-full ${
-                    pkg.isActive ? "bg-muted text-muted-foreground" : "bg-gradient-primary"
-                  }`}
-                  disabled={pkg.isActive}
-                >
-                  {pkg.isActive ? "Paket Saat Ini" : "Upgrade Paket"}
+                <Button className="w-full bg-gradient-primary hover:opacity-90">
+                  Mulai Sekarang
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Informasi Langganan</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Paket Aktif</p>
-                <p className="font-semibold">UMKM</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Tanggal Perpanjangan</p>
-                <p className="font-semibold">15 Januari 2025</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Status</p>
-                <Badge className="bg-success">Aktif</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </DashboardLayout>
+    </section>
   );
 };
-
-export default Packages;
