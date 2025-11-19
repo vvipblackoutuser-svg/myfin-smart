@@ -22,7 +22,7 @@ const WhatsAppSettings = () => {
   return (
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-8">
-        <div>
+        <div className="text-left">
           <h1 className="text-3xl font-bold mb-2">Pengaturan WhatsApp</h1>
           <p className="text-muted-foreground">
             Kelola nomor WhatsApp yang terhubung dengan bot MyFin
