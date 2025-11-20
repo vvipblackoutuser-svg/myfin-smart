@@ -51,7 +51,6 @@ const Payment = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
-  const [proofFile, setProofFile] = useState<File | null>(null);
   const [paymentData, setPaymentData] = useState<any>(null);
 
   const { package: pkg, type, currentPackage, priceDifference } = location.state || {};
@@ -92,49 +91,32 @@ const Payment = () => {
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProofFile(e.target.files[0]);
-    }
+  const handleCheckStatus = async () => {
+    // TODO: Call Midtrans API to check status
+    toast({
+      title: "Mengecek status pembayaran",
+      description: "Mohon tunggu sebentar...",
+    });
+
+    // Simulate status check
+    setTimeout(() => {
+      toast({
+        title: "Status Pembayaran",
+        description: "Pembayaran Anda masih dalam proses",
+      });
+    }, 1000);
   };
 
-  const handlePayment = () => {
-    if (!selectedMethod) {
-      toast({
-        title: "Pilih metode pembayaran",
-        description: "Silakan pilih metode pembayaran terlebih dahulu",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!proofFile) {
-      toast({
-        title: "Upload bukti pembayaran",
-        description: "Silakan upload bukti pembayaran terlebih dahulu",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Simulate payment processing
+  const handleCancel = () => {
+    // TODO: Call Midtrans API to cancel transaction
     toast({
-      title: "Pembayaran sedang diproses",
-      description: "Kami akan memverifikasi pembayaran Anda dalam 1x24 jam",
+      title: "Membatalkan pembayaran",
+      description: "Transaksi akan dibatalkan",
     });
 
     setTimeout(() => {
-      navigate("/invoice", { 
-        state: { 
-          package: pkg,
-          type,
-          currentPackage,
-          amount,
-          paymentMethod: selectedMethod,
-          timestamp: new Date().toISOString()
-        } 
-      });
-    }, 1500);
+      navigate("/packages");
+    }, 1000);
   };
 
   return (
@@ -359,36 +341,28 @@ const Payment = () => {
           </Card>
         )}
 
-            {/* Upload Proof */}
+            {/* Payment Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Upload Bukti Pembayaran</CardTitle>
+                <CardTitle>Aksi Pembayaran</CardTitle>
                 <CardDescription>
-                  Upload screenshot atau foto bukti pembayaran Anda
+                  Cek status pembayaran atau batalkan transaksi
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="proof">Bukti Pembayaran</Label>
-                  <Input
-                    id="proof"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="mt-2"
-                  />
-                  {proofFile && (
-                    <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
-                      <Check className="h-4 w-4 text-success" />
-                      {proofFile.name}
-                    </p>
-                  )}
-                </div>
+              <CardContent className="space-y-3">
                 <Button
                   className="w-full bg-gradient-primary"
-                  onClick={handlePayment}
+                  onClick={handleCheckStatus}
                 >
-                  Konfirmasi Pembayaran
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Cek Status Pembayaran
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleCancel}
+                >
+                  Batalkan Pembayaran
                 </Button>
               </CardContent>
             </Card>
