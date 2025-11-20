@@ -10,6 +10,7 @@ import Packages from "./pages/Packages";
 import PackagePurchase from "./pages/PackagePurchase";
 
 import Payment from "./pages/Payment";
+import PaymentStatus from "./pages/PaymentStatus";
 import Invoice from "./pages/Invoice";
 import Transactions from "./pages/Transactions";
 import Signup from "./pages/Signup";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/packages/purchase" element={<PackagePurchase />} />
           
           <Route path="/payment" element={<Payment />} />
+          <Route path="/payment-status" element={<PaymentStatus />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/signup" element={<Signup />} />
