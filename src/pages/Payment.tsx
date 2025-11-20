@@ -49,8 +49,10 @@ const Payment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const [step, setStep] = useState<1 | 2>(1);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [proofFile, setProofFile] = useState<File | null>(null);
+  const [paymentData, setPaymentData] = useState<any>(null);
 
   const { package: pkg, type, currentPackage, priceDifference } = location.state || {};
 
@@ -61,6 +63,26 @@ const Payment = () => {
 
   const amount = type === "upgrade" ? priceDifference : pkg.priceValue;
   const isUpgrade = type === "upgrade";
+
+  const handleContinue = async () => {
+    if (!selectedMethod) {
+      toast({
+        title: "Pilih metode pembayaran",
+        description: "Silakan pilih metode pembayaran terlebih dahulu",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // TODO: Call Midtrans API through edge function
+    // For now, simulate payment data
+    setPaymentData({
+      qr_url: "https://api.sandbox.midtrans.com/v2/gopay/example/qr-code",
+      expiry_time: new Date(Date.now() + 15 * 60 * 1000).toISOString()
+    });
+    
+    setStep(2);
+  };
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -122,14 +144,16 @@ const Payment = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => step === 2 ? setStep(1) : navigate(-1)}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
             <h1 className="text-3xl font-bold mb-2">Pembayaran</h1>
             <p className="text-muted-foreground">
-              {isUpgrade ? "Selesaikan pembayaran upgrade paket Anda" : "Selesaikan pembayaran paket Anda"}
+              {step === 1 
+                ? "Pilih metode pembayaran" 
+                : "Selesaikan pembayaran Anda"}
             </p>
           </div>
         </div>
@@ -163,32 +187,44 @@ const Payment = () => {
           </CardContent>
         </Card>
 
-        {/* Payment Method Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Pilih Metode Pembayaran</CardTitle>
-            <CardDescription>Pilih metode pembayaran yang Anda inginkan</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {paymentMethods.map((method) => (
-                <button
-                  key={method.id}
-                  onClick={() => setSelectedMethod(method.id)}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedMethod === method.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
+        {step === 1 ? (
+          <>
+            {/* Payment Method Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Pilih Metode Pembayaran</CardTitle>
+                <CardDescription>Pilih metode pembayaran yang Anda inginkan</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {paymentMethods.map((method) => (
+                    <button
+                      key={method.id}
+                      onClick={() => setSelectedMethod(method.id)}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        selectedMethod === method.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <method.icon className="h-8 w-8 text-primary mb-2" />
+                      <p className="font-semibold">{method.name}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{method.description}</p>
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  className="w-full bg-gradient-primary"
+                  onClick={handleContinue}
+                  disabled={!selectedMethod}
                 >
-                  <method.icon className="h-8 w-8 text-primary mb-2" />
-                  <p className="font-semibold">{method.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{method.description}</p>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  Lanjutkan
+                </Button>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <>
 
         {/* Payment Details */}
         {selectedMethod === "qris" && (
@@ -323,40 +359,40 @@ const Payment = () => {
           </Card>
         )}
 
-        {/* Upload Proof */}
-        {selectedMethod && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Upload Bukti Pembayaran</CardTitle>
-              <CardDescription>
-                Upload screenshot atau foto bukti pembayaran Anda
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="proof">Bukti Pembayaran</Label>
-                <Input
-                  id="proof"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="mt-2"
-                />
-                {proofFile && (
-                  <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
-                    <Check className="h-4 w-4 text-success" />
-                    {proofFile.name}
-                  </p>
-                )}
-              </div>
-              <Button
-                className="w-full bg-gradient-primary"
-                onClick={handlePayment}
-              >
-                Konfirmasi Pembayaran
-              </Button>
-            </CardContent>
-          </Card>
+            {/* Upload Proof */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload Bukti Pembayaran</CardTitle>
+                <CardDescription>
+                  Upload screenshot atau foto bukti pembayaran Anda
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="proof">Bukti Pembayaran</Label>
+                  <Input
+                    id="proof"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="mt-2"
+                  />
+                  {proofFile && (
+                    <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+                      <Check className="h-4 w-4 text-success" />
+                      {proofFile.name}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  className="w-full bg-gradient-primary"
+                  onClick={handlePayment}
+                >
+                  Konfirmasi Pembayaran
+                </Button>
+              </CardContent>
+            </Card>
+          </>
         )}
       </div>
     </DashboardLayout>
