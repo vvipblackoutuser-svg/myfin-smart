@@ -9,29 +9,96 @@ import { useNavigate, useLocation } from "react-router-dom";
 const Invoice = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { package: pkg, type, currentPackage, amount, paymentMethod, timestamp } = location.state || {};
+  const { package: pkg, amount, paymentStatus, timestamp } = location.state || {};
 
   if (!pkg) {
     navigate("/packages");
     return null;
   }
 
-  const isUpgrade = type === "upgrade";
   const date = new Date(timestamp);
   const invoiceNumber = `INV/${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}`;
 
-  const getPaymentMethodName = () => {
-    switch (paymentMethod) {
-      case "qris": return "QRIS";
-      case "bank": return "Transfer Bank";
-      case "ewallet": return "E-Wallet";
-      default: return "-";
+  const getStatusConfig = () => {
+    switch (paymentStatus) {
+      case "success":
+        return {
+          icon: CheckCircle2,
+          color: "text-success",
+          bgColor: "bg-success/10",
+          borderColor: "border-success",
+          title: "Pembayaran Berhasil",
+          badge: "Lunas"
+        };
+      case "failed":
+        return {
+          icon: Clock,
+          color: "text-destructive",
+          bgColor: "bg-destructive/10",
+          borderColor: "border-destructive",
+          title: "Pembayaran Gagal",
+          badge: "Gagal"
+        };
+      default:
+        return {
+          icon: Clock,
+          color: "text-warning",
+          bgColor: "bg-warning/10",
+          borderColor: "border-warning",
+          title: "Menunggu Pembayaran",
+          badge: "Pending"
+        };
     }
   };
 
+  const statusConfig = getStatusConfig();
+  const StatusIcon = statusConfig.icon;
+
   const handleDownload = () => {
-    // In a real app, this would generate and download a PDF
-    alert("Invoice akan diunduh sebagai PDF");
+    const invoiceContent = `
+INVOICE - MyFin
+=====================================
+Invoice Number: ${invoiceNumber}
+Date: ${date.toLocaleDateString('id-ID')}
+
+CUSTOMER INFORMATION
+-------------------------------------
+Name: John Doe
+Email: john.doe@example.com
+
+ORDER DETAILS
+-------------------------------------
+Package: ${pkg.name}
+Description: Paket Baru - Langganan Bulanan
+Price: ${pkg.price}
+
+PAYMENT DETAILS
+-------------------------------------
+Payment Method: Midtrans Snap
+Status: ${statusConfig.badge}
+
+TOTAL
+-------------------------------------
+Subtotal: Rp ${amount.toLocaleString('id-ID')}
+Admin Fee: Rp 0
+Total: Rp ${amount.toLocaleString('id-ID')}
+
+=====================================
+MyFin - Platform Manajemen Keuangan
+Jl. Contoh No. 123, Jakarta
+Email: support@myfin.id
+=====================================
+    `.trim();
+
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice-${invoiceNumber}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -60,17 +127,20 @@ const Invoice = () => {
         </div>
 
         {/* Status Card */}
-        <Card className="border-2 border-warning">
+        <Card className={`border-2 ${statusConfig.borderColor}`}>
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="rounded-full bg-warning/10 p-3">
-                <Clock className="h-6 w-6 text-warning" />
+              <div className={`rounded-full ${statusConfig.bgColor} p-3`}>
+                <StatusIcon className={`h-6 w-6 ${statusConfig.color}`} />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold mb-1">Pembayaran Sedang Diverifikasi</h3>
+                <h3 className="font-semibold mb-1">{statusConfig.title}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Kami sedang memverifikasi pembayaran Anda. Proses verifikasi memakan waktu maksimal 1x24 jam. 
-                  Anda akan menerima notifikasi setelah pembayaran dikonfirmasi.
+                  {paymentStatus === "success" 
+                    ? "Pembayaran Anda telah dikonfirmasi. Paket sudah aktif dan siap digunakan."
+                    : paymentStatus === "failed"
+                    ? "Pembayaran Anda gagal diproses. Silakan coba lagi atau hubungi support."
+                    : "Kami sedang memverifikasi pembayaran Anda. Proses verifikasi memakan waktu maksimal 1x24 jam."}
                 </p>
               </div>
             </div>
@@ -119,30 +189,15 @@ const Invoice = () => {
               <p className="font-semibold">Detail Pesanan</p>
               
               <div className="space-y-3">
-                {isUpgrade && currentPackage && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Paket Sebelumnya:</span>
-                    <span>{currentPackage.name}</span>
-                  </div>
-                )}
-                
                 <div className="flex justify-between">
                   <div>
                     <p className="font-medium">{pkg.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {isUpgrade ? "Upgrade Paket" : "Paket Baru"} - Langganan Bulanan
+                      Paket Baru - Langganan Bulanan
                     </p>
                   </div>
                   <p className="font-semibold">{pkg.price}</p>
                 </div>
-
-                {isUpgrade && (
-                  <div className="bg-muted p-3 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      Biaya prorata untuk sisa periode bulan ini
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -154,13 +209,13 @@ const Invoice = () => {
               
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Metode Pembayaran:</span>
-                <span>{getPaymentMethodName()}</span>
+                <span>Midtrans Snap</span>
               </div>
               
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Status:</span>
-                <Badge variant="outline" className="bg-warning/10 text-warning border-warning">
-                  Menunggu Verifikasi
+                <Badge variant="outline" className={`${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor}`}>
+                  {statusConfig.badge}
                 </Badge>
               </div>
             </div>

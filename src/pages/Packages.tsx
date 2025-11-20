@@ -43,13 +43,19 @@ const packages = [
 const Packages = () => {
   const navigate = useNavigate();
 
+  const handleBuyPackage = (pkg: typeof packages[0]) => {
+    navigate("/packages/purchase", { 
+      state: { package: pkg } 
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Paket Aktif</h1>
+          <h1 className="text-3xl font-bold mb-2">Paket Langganan</h1>
           <p className="text-muted-foreground">
-            Kelola langganan dan upgrade paket Anda
+            Pilih paket yang sesuai dengan kebutuhan bisnis Anda
           </p>
         </div>
 
@@ -105,9 +111,9 @@ const Packages = () => {
                     pkg.isActive ? "bg-muted text-muted-foreground" : "bg-gradient-primary"
                   }`}
                   disabled={pkg.isActive}
-                  onClick={() => !pkg.isActive && navigate("/packages/upgrade")}
+                  onClick={() => !pkg.isActive && handleBuyPackage(pkg)}
                 >
-                  {pkg.isActive ? "Paket Saat Ini" : "Upgrade Paket"}
+                  {pkg.isActive ? "Paket Saat Ini" : "Beli Paket"}
                 </Button>
               </CardContent>
             </Card>
